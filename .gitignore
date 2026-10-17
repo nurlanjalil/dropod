@@ -1,0 +1,14 @@
+# Build output
+build/
+
+# Rendered video frames and output (large; attach the video to a release instead)
+video/out/
+
+# Local tools and editors
+.claude/
+node_modules/
+.DS_Store
+
+# Kept on the Mac, not published: design exploration and the promo video's tools
+design/
+video/
