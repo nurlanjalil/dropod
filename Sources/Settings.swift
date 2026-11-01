@@ -8,7 +8,14 @@ enum Settings {
         defaults.register(defaults: ["removeAfterDragOut": true, "shakeToOpen": true, "shiftToOpen": false,
                                      "screenshotsToClipboard": true, "screenshotsToTab": true,
                                      "instantScreenshots": false, "screenshotRetention": 86_400.0,
-                                     "clipboardHistory": true, "clipRetention": 604_800.0, "clipLimit": 200])
+                                     "clipboardHistory": true, "clipRetention": 604_800.0, "clipLimit": 200,
+                                     "trackpadCornerTap": false])
+    }
+
+    /// Two quick taps in the trackpad's top-right corner do what the shortcut does.
+    static var trackpadCornerTap: Bool {
+        get { defaults.bool(forKey: "trackpadCornerTap") }
+        set { defaults.set(newValue, forKey: "trackpadCornerTap") }
     }
 
     /// Copied text is kept in the Clipboard tab.

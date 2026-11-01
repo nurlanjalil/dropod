@@ -295,7 +295,8 @@ final class ShelfController: NSObject {
 
     // MARK: Keyboard
 
-    /// Keys work once the window has been clicked. Returns false for keys it doesn't use.
+    /// Keys work once the window has been clicked or opened with the shortcut. Returns false
+    /// for keys it doesn't use.
     func handleKey(_ event: NSEvent) -> Bool {
         let flags = event.modifierFlags.intersection([.command, .shift, .option, .control])
         let command = flags == .command

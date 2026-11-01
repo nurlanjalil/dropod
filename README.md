@@ -11,7 +11,7 @@ https://github.com/user-attachments/assets/4b887fa2-f070-4fb4-8845-df6d435965a3
 
 While you drag a file, **shake the pointer** and Dropod appears beside it. Drop files, images, links or text on it, switch to any app, and drag them out when you're ready. When you're done, it shrinks into a small capsule out of the way.
 
-Dropod is a native AppKit app with Liquid Glass on macOS 26. It needs no special permissions, never takes focus from the app you're using, and keeps everything on your Mac.
+Dropod is a native AppKit app with Liquid Glass on macOS 26. It needs no special permissions, doesn't take focus from the app you're using unless you open it with its shortcut, and keeps everything on your Mac.
 
 ## Features
 
@@ -81,6 +81,7 @@ Requires macOS 14 or later on Apple silicon. Liquid Glass needs macOS 26; earlie
 | Shake while dragging | Open a new tab beside the pointer |
 | ⇧⌘Space | Show or hide Dropod (while dragging: open a new tab) |
 | ⌃⌘V | Open clipboard history with search |
+| Double-tap the trackpad's top-right corner | Same as ⇧⌘Space. Off by default; turn it on from the menu bar icon |
 | Space | Quick Look (Peek for text) |
 | ↑ ↓ ← → | Move the selection; Quick Look follows |
 | ⌘A · ⌘C · ⌫ | Select all · Copy · Remove from Dropod |
@@ -88,6 +89,8 @@ Requires macOS 14 or later on Apple silicon. Liquid Glass needs macOS 26; earlie
 | Esc | Collapse Dropod |
 
 Both shortcuts can be changed from the menu bar icon.
+
+With tap to click on, double-tapping the corner also double-clicks whatever is under the pointer. The corner tap reads the trackpad through a private Apple framework, so a macOS update could stop it working; if the framework is gone, the option disappears from the menu.
 
 ## Privacy
 

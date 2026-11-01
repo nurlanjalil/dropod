@@ -35,6 +35,7 @@ ClipboardWatcher ──────────┘     shelves.json             
 |:--|:--|
 | `main.swift`, `AppDelegate.swift` | Start-up, the menu bar menu and its settings, saving on quit |
 | `Settings.swift`, `Shortcut.swift`, `HotKey.swift` | Preferences, shortcut recording, global shortcuts (Carbon hot keys) |
+| `TrackpadCorner.swift` | Double tap in the trackpad's top-right corner, through MultitouchSupport |
 | `DragWatcher.swift` | Notices drags anywhere on screen; shake recognition |
 | `ShelfManager.swift` | Shake sessions, Screenshots and Clipboard tabs, expiry, the ⌃⌘V session, saving and restoring |
 | `DropodWindow.swift` | The window: tabs, tab bar and chips, collapsing, Undo for closed tabs, sizing |
@@ -51,7 +52,8 @@ ClipboardWatcher ──────────┘     shelves.json             
 
 - **Drag detection without permissions.** A global mouse-down monitor needs no permission. While the button is held, the drag pasteboard is polled at 60 Hz: a real content drag changes it, while moving a window or selecting text doesn't. Drags that start in Dropod are ignored, so dragging items out never opens a new tab.
 - **Shake.** Three changes of direction, each after at least 28 px of travel, within 0.8 s.
-- **Focus.** The window is a non-activating panel, so appearing never takes focus. It becomes key only when clicked, or while Undo or ⌃⌘V needs the keyboard. After ⌃⌘V, Dropod re-activates the app you came from.
+- **Trackpad corner.** Palm-rest knocks need a motion sensor that the M1 MacBook Air doesn't report, so the trigger is a double tap on the trackpad itself, off by default. The private MultitouchSupport framework is the only way to see finger positions system-wide; it is loaded at runtime and the option hides if it's missing. A tap counts when it is one finger alone, inside the top-right 15% of each axis, under 0.25 s and nearly still, with at most 0.35 s before the second tap.
+- **Focus.** The window is a non-activating panel, so appearing on its own (a shake, a screenshot) never takes focus. It becomes key only when clicked, when opened with ⇧⌘Space or the corner tap so Esc works straight away, or while Undo or ⌃⌘V needs the keyboard. Collapsing or hiding hands the keyboard back. After ⌃⌘V, Dropod re-activates the app you came from.
 - **Liquid Glass.** The installed SDK predates `NSGlassEffectView`, so it is looked up at runtime and set up with key-value coding. Without it, `NSVisualEffectView` is used.
 - **One window, tabs, a capsule.** Separate shelf windows were confusing, so each pile is a tab. Screenshots and Clipboard are permanent system tabs: they can't be closed, and clearing them asks first.
 - **The capsule has no totals.** A running count mostly measured clipboard history. Badges count only what arrived while Dropod was collapsed or hidden, and the chip that received something unfolds a one-line label for 3 s. The capsule grows towards the middle of the screen so it never drifts.
@@ -96,6 +98,7 @@ Pointer and keyboard interactions (shaking, dragging between apps, clicks) are c
 
 - Apple silicon only for now: the build targets arm64.
 - Quick Look and AirDrop make Dropod the active app; click back into your app afterwards.
+- The trackpad corner tap can only observe touches, so with tap to click on it also double-clicks under the pointer.
 - On macOS 26, new menu bar icons can be hidden. Allow Dropod in System Settings → Menu Bar.
 - Converting an image with transparency to JPEG fills the transparent areas.
 - Ad hoc signing means macOS asks again for folder access after each update. Notarizing with an Apple Developer ID would fix this and remove the "Open Anyway" step.

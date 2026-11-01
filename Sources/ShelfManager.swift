@@ -13,7 +13,7 @@ final class ShelfManager {
     func noteDrop() { dropCount += 1 }
 
     /// One shortcut does the obvious thing: while dragging, open the window beside the
-    /// pointer; otherwise make a first tab, bring the window back, or collapse and expand it.
+    /// pointer; otherwise make a first tab, bring the window back, open the capsule, or hide.
     func shortcutPressed() {
         if DragWatcher.shared.isDragging {
             // Dragging something out of Dropod: the window is already here.
@@ -25,9 +25,13 @@ final class ShelfManager {
         } else if !window.isOnScreen {
             window.setCollapsed(false, animated: false)
             window.show()
+        } else if window.isCollapsed {
+            window.setCollapsed(false)
         } else {
-            window.setCollapsed(!window.isCollapsed)
+            window.hide()
         }
+        // You asked for the window, so take the keyboard: Esc must reach Dropod, not the app behind.
+        if !DragWatcher.shared.isDragging && window.isOnScreen { window.panel.makeKey() }
     }
 
     /// A new empty tab. When the window isn't on screen yet, it appears centred on `point`.
@@ -62,25 +66,15 @@ final class ShelfManager {
     // MARK: Screenshots
 
     /// A new screenshot: copied to the clipboard and/or added to the Screenshots tab.
-    /// Stays quiet: the capsule pulses or a toast appears; the window never pops up over your work.
+    /// Stays quiet: the capsule pulses or a toast appears; a hidden window stays hidden.
     func screenshotTaken(_ url: URL) {
         if Settings.screenshotsToClipboard { ScreenshotWatcher.copyToClipboard(url) }
         guard Settings.screenshotsToTab else { return }
 
-        let wasEmpty = tabs.isEmpty
         let tab = tabs.first { $0.isScreenshots } ?? makeScreenshotsTab()
         tab.add([ShelfItem(url: url)])
 
-        if !window.isOnScreen {
-            window.setCollapsed(true, animated: false)
-            if wasEmpty, let visible = NSScreen.main?.visibleFrame {
-                // First time: a capsule in the top-right corner, out of the way.
-                window.move(topLeft: NSPoint(x: visible.maxX - window.collapsedSize.width - 16, y: visible.maxY - 12),
-                            animated: false)
-            }
-            window.show()
-        }
-        if window.isCollapsed {
+        if !window.isOnScreen || window.isCollapsed {
             window.announce(tab, Settings.screenshotsToClipboard ? "Screenshot copied" : "Screenshot saved")
         } else if window.active !== tab {
             window.active?.view.flash(Settings.screenshotsToClipboard ? "Screenshot copied · added to Screenshots"

@@ -250,6 +250,7 @@ final class DropodWindow: NSObject, NSWindowDelegate {
     func hide() {
         guard isOnScreen else { return }
         peek.close()
+        returnKeyboard()
         isOnScreen = false
         Motion.dismiss(panel)
         ShelfManager.shared.setNeedsSave()
@@ -280,9 +281,19 @@ final class DropodWindow: NSObject, NSWindowDelegate {
                 $0.alphaValue = 1
             }
         })
-        if collapsed { panel.makeFirstResponder(nil) }
+        if collapsed {
+            panel.makeFirstResponder(nil)
+            returnKeyboard()
+        }
         updateFrame(animated: fade)
         ShelfManager.shared.setNeedsSave()
+    }
+
+    /// Typing goes back to the app behind once the window steps aside.
+    private func returnKeyboard() {
+        guard panel.isKeyWindow, let front = NSWorkspace.shared.frontmostApplication,
+              front != NSRunningApplication.current else { return }
+        front.activate()
     }
 
     // MARK: Geometry
@@ -411,7 +422,7 @@ final class TabBar: NSView, NSTextFieldDelegate {
     private var scrollingChips: [TabChip] { chips.filter { !$0.shelf.isSystem } }
     private let divider = NSBox()
     private let addButton = AddTabButton(symbol: "plus", tip: "New Tab")
-    private let collapseButton = ToolbarButton(symbol: "chevron.down", tip: "Collapse")
+    private let collapseButton = ToolbarButton(symbol: "chevron.down", tip: "Esc to Collapse")
     private let menuButton = ToolbarButton(symbol: "ellipsis", tip: "Actions")
     private let renameField = NSTextField()
     private weak var renaming: ShelfController?
