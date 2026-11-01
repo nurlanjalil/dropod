@@ -307,8 +307,9 @@ final class DropodWindow: NSObject, NSWindowDelegate {
     }
 
     func move(topLeft point: NSPoint, animated: Bool) {
-        var frame = panel.frame
-        frame.origin = NSPoint(x: point.x, y: point.y - frame.height)
+        // Mid-resize the panel still has its old size: keep the size it's heading to.
+        let size = targetFrame?.size ?? panel.frame.size
+        let frame = NSRect(x: point.x, y: point.y - size.height, width: size.width, height: size.height)
         setFrame(onScreen(frame), animated: animated)
     }
 
