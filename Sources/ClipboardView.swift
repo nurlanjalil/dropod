@@ -297,7 +297,9 @@ final class ClipRowView: ItemCellView {
             icon.image = Self.textSymbol
             icon.contentTintColor = .secondaryLabelColor
         }
-        let text = (item.text ?? item.name).trimmingCharacters(in: .whitespacesAndNewlines)
+        // Far more than two lines hold: measuring a long clip's full text takes tens of
+        // milliseconds, and every row measures on every frame while the window's width changes.
+        let text = String((item.text ?? item.name).trimmingCharacters(in: .whitespacesAndNewlines).prefix(400))
         if text != textLabel.stringValue {
             textLabel.stringValue = text
             measuredWidth = 0

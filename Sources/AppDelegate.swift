@@ -22,6 +22,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
         registerShortcut()
 
+        TrackpadCorner.shared.onDoubleTap = { ShelfManager.shared.shortcutPressed() }
+        if Settings.trackpadCornerTap { TrackpadCorner.shared.start() }
+
         let watcher = DragWatcher.shared
         watcher.onOpenRequest = { point in ShelfManager.shared.openWhileDragging(at: point) }
         watcher.onDragEnded = { ShelfManager.shared.dragEnded() }
@@ -241,6 +244,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                                 symbol: clipboardShortcutTaken ? "exclamationmark.triangle" : "list.clipboard") { [weak self] in
             self?.changeClipboardShortcut()
         })
+        if TrackpadCorner.shared.isAvailable {
+            let cornerTap = ActionItem("Double-Tap Trackpad's Top-Right Corner") {
+                Settings.trackpadCornerTap.toggle()
+                if Settings.trackpadCornerTap { TrackpadCorner.shared.start() } else { TrackpadCorner.shared.stop() }
+            }
+            cornerTap.state = Settings.trackpadCornerTap ? .on : .off
+            menu.addItem(cornerTap)
+        }
         let removeItem = ActionItem("Remove Items After Dragging Out") {
             Settings.removeAfterDragOut.toggle()
         }
@@ -283,7 +294,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             appears right beside it with a fresh tab. Drop files on it, and drag them out \
             whenever you need them.
 
-            Press \(key) any other time to collapse or expand the Dropod window.
+            Press \(key) any other time to show or hide the Dropod window, or Esc to collapse it.
 
             You can change the shortcut from the menu bar icon.
             """
